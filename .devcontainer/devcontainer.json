@@ -6,14 +6,13 @@
   },
   "forwardPorts": [5050, 5432, 5000, 5001, 7071, 7047],
   "portsAttributes": {
-    "5050": {"label": "pgAdmin"},
-    "7047": {"label": "Swagger (https)"},
-    "5000": {"label": "API (http)"},
-    "5001": {"label": "API (https)"}
+    "5050": { "label": "pgAdmin" },
+    "7047": { "label": "Swagger (https)" },
+    "5000": { "label": "API (http)" },
+    "5001": { "label": "API (https)" }
   },
   "postCreateCommand": "dotnet --info",
-  "dockerComposeFile": ["../docker-compose.yml"],
-  "runServices": ["db", "pgadmin"],
+  "postStartCommand": "docker compose -f ../docker-compose.yml up -d",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "customizations": {
     "vscode": {

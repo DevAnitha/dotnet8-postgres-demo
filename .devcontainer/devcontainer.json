@@ -11,7 +11,7 @@
     "5000": { "label": "API (http)" },
     "5001": { "label": "API (https)" }
   },
-  "postCreateCommand": "dotnet --info",
+ "postCreateCommand": "sudo apt-get update && sudo apt-get install -y git-lfs && git lfs install && dotnet --info",
   "postStartCommand": "docker compose -f ../docker-compose.yml up -d",
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "customizations": {

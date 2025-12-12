@@ -130,3 +130,30 @@ CREATE TABLE separation_initiation (
         FOREIGN KEY (separation_status_id)
         REFERENCES separation_status (separation_status_id)
 );
+CREATE TABLE separation_offices_core_checklist (
+    separation_offices_checklist_id
+        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    core_identity_id        INT NOT NULL,
+    off_boarding_office_id  INT NOT NULL,
+    record_status_id        INT NULL,
+
+    -- audit fields
+    created_by              INT NULL,
+    created_date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by              INT NULL,
+    updated_date            TIMESTAMP NULL,
+    archived_by             INT NULL,
+    archived_date           TIMESTAMP NULL,
+
+    CONSTRAINT fk_sep_office_checklist_core_identity
+        FOREIGN KEY (core_identity_id)
+        REFERENCES core_identity (core_identity_id),
+
+    CONSTRAINT fk_sep_office_checklist_office
+        FOREIGN KEY (off_boarding_office_id)
+        REFERENCES off_boarding_offices (off_boarding_office_id),
+
+    CONSTRAINT uq_core_identity_office
+        UNIQUE (core_identity_id, off_boarding_office_id)
+);

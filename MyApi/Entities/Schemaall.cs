@@ -535,3 +535,60 @@ namespace HrApp.Infrastructure.Entities
         public DateTime? UpdatedDate { get; set; }
 
         [Column("u]()
+////////////////////////////////////////
+/// 
+
+
+namespace YourNamespace.Entities;
+
+[Table("separation_initiation")]
+public class SeparationInitiation : FullAuditEntity
+{
+    [Key]
+    [Column("separation_initiation_id")]
+    public int SeparationInitiationId { get; set; }
+
+    [Column("core_identity_id")]
+    public int CoreIdentityId { get; set; }
+
+    // supervisor_id is also a CoreIdentity person
+    [Column("supervisor_id")]
+    public int? SupervisorId { get; set; }
+
+    [Column("last_day")]
+    public DateTime? LastDay { get; set; }
+
+    [Column("separation_date")]
+    public DateTime? SeparationDate { get; set; }
+
+    // Lookup FK (was shown as "separation_type text fk lookup" in the sheet)
+    [Column("separation_type_id")]
+    public int? SeparationTypeId { get; set; }
+
+    [Column("reason_for_separation")]
+    public string? ReasonForSeparation { get; set; }
+
+    [Column("notify_employee")]
+    public bool NotifyEmployee { get; set; }
+
+    [Column("instant_separation")]
+    public bool InstantSeparation { get; set; }
+
+    [Column("additional_notes")]
+    public string? AdditionalNotes { get; set; }
+
+    // Lookup FK (was shown as "separation_status text fk lookup" in the sheet)
+    [Column("separation_status_id")]
+    public int? SeparationStatusId { get; set; }
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    // Navigation properties
+    public CoreIdentity CoreIdentity { get; set; } = null!;
+    public CoreIdentity? Supervisor { get; set; }
+
+    public SeparationType? SeparationType { get; set; }
+    public SeparationStatus? SeparationStatus { get; set; }
+    public RecordStatus? RecordStatus { get; set; }
+}

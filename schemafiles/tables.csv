@@ -1,0 +1,132 @@
+CREATE TABLE separation_type (
+    separation_type_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    separation_type_name    TEXT NOT NULL,
+    sort_order              INT NULL,
+    record_status_id        INT NULL,
+
+    -- audit fields
+    created_by              INT NULL,
+    created_date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by              INT NULL,
+    updated_date            TIMESTAMP NULL,
+    archived_by             INT NULL,
+    archived_date           TIMESTAMP NULL
+);
+CREATE TABLE separation_status (
+    separation_status_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    separation_status_name  TEXT NOT NULL,
+    sort_order              INT NULL,
+    record_status_id        INT NULL,
+
+    -- audit fields
+    created_by              INT NULL,
+    created_date            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by              INT NULL,
+    updated_date            TIMESTAMP NULL,
+    archived_by             INT NULL,
+    archived_date           TIMESTAMP NULL
+);
+CREATE TABLE off_boarding_offices (
+    off_boarding_office_id    INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    off_boarding_office_name  TEXT NOT NULL,
+    sort_order                INT NULL,
+    record_status_id          INT NULL,
+
+    -- audit fields
+    created_by                INT NULL,
+    created_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by                INT NULL,
+    updated_date              TIMESTAMP NULL,
+    archived_by               INT NULL,
+    archived_date             TIMESTAMP NULL
+);
+CREATE TABLE off_boarding_office_items (
+    off_boarding_office_item_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    off_boarding_office_id        INT NOT NULL,
+    off_boarding_office_item_name TEXT NOT NULL,
+    sort_order                    INT NULL,
+    record_status_id              INT NULL,
+
+    -- audit fields
+    created_by                    INT NULL,
+    created_date                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by                    INT NULL,
+    updated_date                  TIMESTAMP NULL,
+    archived_by                   INT NULL,
+    archived_date                 TIMESTAMP NULL,
+
+    CONSTRAINT fk_office_items_office
+        FOREIGN KEY (off_boarding_office_id)
+        REFERENCES off_boarding_offices (off_boarding_office_id)
+);
+CREATE TABLE off_boarding_office_item_core_checklist (
+    off_boarding_office_item_core_checklist_id
+        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    core_identity_id              INT NOT NULL,
+    off_boarding_office_item_id   INT NOT NULL,
+    is_complete                   BOOLEAN DEFAULT FALSE,
+    record_status_id              INT NULL,
+
+    -- audit fields
+    created_by                    INT NULL,
+    created_date                  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by                    INT NULL,
+    updated_date                  TIMESTAMP NULL,
+    archived_by                   INT NULL,
+    archived_date                 TIMESTAMP NULL,
+
+    CONSTRAINT fk_checklist_core_identity
+        FOREIGN KEY (core_identity_id)
+        REFERENCES core_identity (core_identity_id),
+
+    CONSTRAINT fk_checklist_office_item
+        FOREIGN KEY (off_boarding_office_item_id)
+        REFERENCES off_boarding_office_items (off_boarding_office_item_id),
+
+    CONSTRAINT uq_core_identity_office_item
+        UNIQUE (core_identity_id, off_boarding_office_item_id)
+);
+CREATE TABLE separation_initiation (
+    separation_initiation_id   INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
+    core_identity_id           INT NOT NULL,
+    supervisor_id              INT NULL,
+
+    last_day                   DATE NULL,
+    separation_date            DATE NULL,
+
+    separation_type_id         INT NULL,
+    separation_status_id       INT NULL,
+
+    reason_for_separation      TEXT NULL,
+    notify_employee            BOOLEAN DEFAULT FALSE,
+    instant_separation         BOOLEAN DEFAULT FALSE,
+    additional_notes           TEXT NULL,
+
+    record_status_id           INT NULL,
+
+    -- audit fields
+    created_by                 INT NULL,
+    created_date               TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_by                 INT NULL,
+    updated_date               TIMESTAMP NULL,
+    archived_by                INT NULL,
+    archived_date              TIMESTAMP NULL,
+
+    CONSTRAINT fk_separation_core_identity
+        FOREIGN KEY (core_identity_id)
+        REFERENCES core_identity (core_identity_id),
+
+    CONSTRAINT fk_separation_supervisor
+        FOREIGN KEY (supervisor_id)
+        REFERENCES core_identity (core_identity_id),
+
+    CONSTRAINT fk_separation_type
+        FOREIGN KEY (separation_type_id)
+        REFERENCES separation_type (separation_type_id),
+
+    CONSTRAINT fk_separation_status
+        FOREIGN KEY (separation_status_id)
+        REFERENCES separation_status (separation_status_id)
+);

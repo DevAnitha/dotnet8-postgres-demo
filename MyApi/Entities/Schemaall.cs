@@ -591,4 +591,151 @@ public class SeparationInitiation : FullAuditEntity
     public SeparationType? SeparationType { get; set; }
     public SeparationStatus? SeparationStatus { get; set; }
     public RecordStatus? RecordStatus { get; set; }
+}///////////
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("separation_type")]
+public class SeparationType : FullAuditEntity
+{
+    [Key]
+    [Column("separation_type_id")]
+    public int SeparationTypeId { get; set; }
+
+    [Column("separation_type_name")]
+    public string SeparationTypeName { get; set; } = null!;
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    public RecordStatus? RecordStatus { get; set; }
+}
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("separation_status")]
+public class SeparationStatus : FullAuditEntity
+{
+    [Key]
+    [Column("separation_status_id")]
+    public int SeparationStatusId { get; set; }
+
+    [Column("separation_status_name")]
+    public string SeparationStatusName { get; set; } = null!;
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    public RecordStatus? RecordStatus { get; set; }
+}
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("off_boarding_offices")]
+public class OffBoardingOffice : FullAuditEntity
+{
+    [Key]
+    [Column("off_boarding_office_id")]
+    public int OffBoardingOfficeId { get; set; }
+
+    [Column("off_boarding_office_name")]
+    public string OffBoardingOfficeName { get; set; } = null!;
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    public RecordStatus? RecordStatus { get; set; }
+}
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("separation_offices_core_checklist")]
+public class SeparationOfficesCoreChecklist : FullAuditEntity
+{
+    [Key]
+    [Column("separation_offices_checklist_id")]
+    public int SeparationOfficesChecklistId { get; set; }
+
+    [Column("core_identity_id")]
+    public int CoreIdentityId { get; set; }
+
+    [Column("off_boarding_office_id")]
+    public int OffBoardingOfficeId { get; set; }
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    // Navigation properties
+    public CoreIdentity CoreIdentity { get; set; } = null!;
+    public OffBoardingOffice OffBoardingOffice { get; set; } = null!;
+    public RecordStatus? RecordStatus { get; set; }
+}
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("off_boarding_office_items")]
+public class OffBoardingOfficeItem : FullAuditEntity
+{
+    [Key]
+    [Column("off_boarding_office_item_id")]
+    public int OffBoardingOfficeItemId { get; set; }
+
+    [Column("off_boarding_office_id")]
+    public int OffBoardingOfficeId { get; set; }
+
+    [Required]
+    [Column("off_boarding_office_item_name")]
+    public string OffBoardingOfficeItemName { get; set; } = null!;
+
+    [Column("sort_order")]
+    public int? SortOrder { get; set; }
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    public OffBoardingOffice OffBoardingOffice { get; set; } = null!;
+    public RecordStatus? RecordStatus { get; set; }
+
+    public ICollection<OffBoardingOfficeItemCoreChecklist> OffBoardingOfficeItemCoreChecklists { get; set; }
+        = new List<OffBoardingOfficeItemCoreChecklist>();
+}
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace YourNamespace.Entities;
+
+[Table("off_boarding_office_item_core_checklist")]
+public class OffBoardingOfficeItemCoreChecklist : FullAuditEntity
+{
+    [Key]
+    [Column("off_boarding_office_item_core_checklist_id")]
+    public int OffBoardingOfficeItemCoreChecklistId { get; set; }
+
+    [Column("core_identity_id")]
+    public int CoreIdentityId { get; set; }
+
+    [Column("off_boarding_office_item_id")]
+    public int OffBoardingOfficeItemId { get; set; }
+
+    [Column("is_complete")]
+    public bool IsComplete { get; set; }
+
+    [Column("record_status_id")]
+    public int? RecordStatusId { get; set; }
+
+    public CoreIdentity CoreIdentity { get; set; } = null!;
+    public OffBoardingOfficeItem OffBoardingOfficeItem { get; set; } = null!;
+    public RecordStatus? RecordStatus { get; set; }
 }

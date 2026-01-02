@@ -182,3 +182,67 @@ create unique index if not exists ux_one_stop_notification_template_type
 
 alter table one_stop_office_separation_checklist
   drop column if exists validation_notes;
+
+---------------------------------------------------------------------------
+
+  -- =====================================================
+-- Step 1: Drop columns you no longer want
+-- =====================================================
+
+ALTER TABLE public.one_stop_office_separation_checklist
+  DROP COLUMN IF EXISTS validation_notes,
+  DROP COLUMN IF EXISTS one_stop_office_id;
+
+
+-- =====================================================
+-- Step 2: Add one_stop_office_separation_id
+-- =====================================================
+
+ALTER TABLE public.one_stop_office_separation_checklist
+  ADD COLUMN one_stop_office_separation_id integer;
+
+
+-- =====================================================
+-- Step 3: Backfill data (IMPORTANT)
+-- Only run this if the table already has data
+-- Adjust join if needed
+-- =====================================================
+
+UPDATE public.one_stop_office_separation_checklist osc
+SET one_stop_office_separation_id = os.one_stop_office_separation_id
+FROM public.one_stop_office_separation os
+WHERE os.separation_initiation_id = osc.separation_initiation_id
+  AND os.one_stop_office_id = (
+      SELECT oi.one_stop_office_id
+      FROM public.one_stop_office_items oi
+      WHERE oi.one_stop_office_item_id = osc.one_stop_office_item_id
+  );
+
+
+-- =====================================================
+-- Step 4: Enforce NOT NULL once data is backfilled
+-- =====================================================
+
+ALTER TABLE public.one_stop_office_separation_checklist
+  ALTER COLUMN one_stop_office_separation_id SET NOT NULL;
+
+
+-- =====================================================
+-- Step 5: Add FK constraint
+-- =====================================================
+
+ALTER TABLE public.one_stop_office_separation_checklist
+  ADD CONSTRAINT fk_os_sep_checklist_sep
+  FOREIGN KEY (one_stop_office_separation_id)
+  REFERENCES public.one_stop_office_separation (one_stop_office_separation_id)
+  ON UPDATE NO ACTION
+  ON DELETE NO ACTION;
+
+
+-- =====================================================
+-- Step 6: (Recommended) Prevent duplicate checklist rows
+-- =====================================================
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_os_sep_checklist_sep_item
+  ON public.one_stop_office_separation_checklist
+     (one_stop_office_separation_id, one_stop_office_item_id);

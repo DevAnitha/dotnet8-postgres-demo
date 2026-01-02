@@ -458,3 +458,39 @@ create index if not exists ix_os_notification_log_sep_initiation
 
 create index if not exists ix_os_notification_log_sent_date
   on public.one_stop_notification_log(sent_date);
+
+  -----------------------------
+  ------------------------=====
+  -----------------------------
+
+  /* ============================================================
+   Remove separation_initiation_id from one_stop_office_separation_checklist
+   + drop the FK constraint that uses it
+   (safe even if names differ)
+   ============================================================ */
+
+-- 1) Drop the FK constraint (if you know the exact name, keep this line)
+ALTER TABLE public.one_stop_office_separation_checklist
+  DROP CONSTRAINT IF EXISTS fk_os_checklist_separation_initiation;
+
+-- 2) If pgAdmin generated a different constraint name, run this query to find it:
+--    (optional helper)
+-- SELECT conname
+-- FROM pg_constraint
+-- WHERE conrelid = 'public.one_stop_office_separation_checklist'::regclass
+--   AND contype = 'f';
+
+-- 3) Drop the column
+ALTER TABLE public.one_stop_office_separation_checklist
+  DROP COLUMN IF EXISTS separation_initiation_id;
+
+
+-------------
+SELECT conname
+FROM pg_constraint
+WHERE conrelid = 'public.one_stop_office_separation_checklist'::regclass
+  AND contype = 'f';
+
+----------------
+ALTER TABLE public.one_stop_office_separation_checklist
+  DROP CONSTRAINT IF EXISTS <paste_constraint_name_here>;
